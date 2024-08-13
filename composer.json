@@ -1,0 +1,21 @@
+{
+    "name": "usuario/apipropiedades",
+    "description": "API para gestion de propiedades",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Usuario\\Apipropiedades\\": "modelos/"
+        }
+    },
+    "authors": [
+        {
+            "name": "jampierzcode",
+            "email": "jampierv127@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "firebase/php-jwt": "^6.10",
+        "vlucas/phpdotenv": "^5.6"
+    }
+}
