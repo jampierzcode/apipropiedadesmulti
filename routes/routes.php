@@ -277,7 +277,14 @@ if ($request_method == 'POST' && $uri[0] == 'api' && $uri[1] == 'register') {
     if (isset($uri[2])) {
         echo $clienteController->getClientesByUserId($uri[2]);
     } else {
-        echo json_encode(['message' => 'Te falta parametros del ID de la provincia']);
+        echo json_encode(['message' => 'Te falta parametros del ID del usuario']);
+    }
+} elseif ($request_method == 'GET' && $uri[0] == 'api' && $uri[1] == 'usuariosbyadmin') {
+
+    if (isset($uri[2])) {
+        echo $controller->getUsuariosByAdminId($uri[2]);
+    } else {
+        echo json_encode(['message' => 'Te falta parametros del ID del admin']);
     }
 } elseif ($request_method == 'POST' && $uri[0] == 'api' && $uri[1] == 'clientes') {
     $data = json_decode(file_get_contents("php://input"), true);

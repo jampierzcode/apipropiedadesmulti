@@ -31,7 +31,7 @@ class Configuracion
     }
     public function readByUser($id)
     {
-        $query = "SELECT * FROM business WHERE user_id=?";
+        $query = "SELECT b.* FROM user_business as ub inner join business as b on ub.business_id=b.id  WHERE ub.user_id=?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $id);
         $stmt->execute();

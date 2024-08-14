@@ -50,7 +50,6 @@ class UserController
                     "id" => $this->user->id,
                     "email" => $this->user->email,
                     "nombres" => $this->user->nombres,
-                    "cliente_id" => $this->user->cliente_id,
                 )
             );
             $jwt = JWT::encode($payload, $_ENV['JWT_SECRET'], 'HS256');
@@ -58,7 +57,8 @@ class UserController
                 "id" => $this->user->id,
                 "email" => $this->user->email,
                 "nombres" => $this->user->nombres,
-                "cliente_id" => $this->user->cliente_id,
+                "celular" => $this->user->celular,
+                "documento" => $this->user->documento,
                 "rol" => $this->user->rol,
                 "token" => $jwt,
             );
@@ -67,5 +67,12 @@ class UserController
         } else {
             return json_encode(['message' => 'Login failed']);
         }
+    }
+    public function getUsuariosByAdminId($id)
+    {
+        $conf = new User($this->db);
+        $stmt = $conf->readUsuariosByAdmin($id);
+        $usuarios = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return json_encode($usuarios);
     }
 }
