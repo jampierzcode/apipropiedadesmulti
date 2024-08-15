@@ -2,6 +2,8 @@
 
 namespace Usuario\Apipropiedades;
 
+use Exception;
+
 class User
 {
     private $conn;
@@ -41,24 +43,65 @@ class User
 
         return false;
     }
-    public function create()
+    public function create($data)
     {
-        $query = "SELECT * FROM " . $this->table_name . " u inner join cliente c on u.cliente_id=c.id WHERE u.email = :email LIMIT 0,1";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':email', $this->email);
-        $stmt->execute();
+        try {
+            $hashed_password = password_hash($data["password"], PASSWORD_BCRYPT);
 
-        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-        if ($row && password_verify($this->password, $row['password'])) {
-            $this->id = $row['id'];
-            $this->cliente_id = $row['cliente_id'];
-            $this->nombres = $row['nombres'];
-            $this->email = $row['email'];
-            return true;
+            // Iniciar la transacción
+            $this->conn->beginTransaction();
+
+            // Primera inserción: tabla `usuario`
+            $query = "INSERT INTO usuario(nombres, celular, documento, email, password, created_by, fecha_created, rol, status) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([
+                $data['nombres'],
+                $data['celular'],
+                $data['documento'],
+                $data['email'],
+                $hashed_password,
+                $data['created_by'],
+                $data['fecha_created'],
+                $data['rol'],
+                $data['status']
+            ]);
+
+            // Obtener el ID del usuario insertado
+            $user_id = $this->conn->lastInsertId();
+
+            // Segunda inserción: tabla `user_business`
+            $asigned = json_decode($this->asignedUserToBusiness($user_id, $data["empresa_id"], $data["fecha_created"], $data['created_by']));
+
+            if ($asigned && $asigned->message === "add") {
+                // Confirmar la transacción
+                $this->conn->commit();
+                return json_encode(['message' => 'add', "user_id" => $user_id, "user_business_id" => $asigned->id]);
+            } else {
+                throw new Exception("Error en la asignación del usuario a la empresa.");
+            }
+        } catch (\Throwable $error) {
+            // Revertir la transacción en caso de error
+            $this->conn->rollBack();
+            return json_encode(['message' => 'error', "error" => $error->getMessage()]);
         }
-
-        return false;
     }
+
+    public function asignedUserToBusiness($user_id, $business_id, $fecha_asigned, $created_by)
+    {
+        try {
+            $query = "INSERT INTO user_business(user_id, business_id, fecha_asigned, created_by) VALUES (?, ?, ?, ?)";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([$user_id, $business_id, $fecha_asigned, $created_by]);
+
+            $user_business_id = $this->conn->lastInsertId();
+            return json_encode(['message' => 'add', "id" => $user_business_id]);
+        } catch (\Throwable $error) {
+            // En caso de error, devolver un mensaje adecuado
+            return json_encode(['message' => 'error', "error" => $error->getMessage()]);
+        }
+    }
+
     public function readUsuariosByAdmin($user_id)
     {
         $query = "SELECT u.*, e.id AS empresa_id

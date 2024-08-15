@@ -62,13 +62,13 @@ function authenticate()
         exit();
     }
 }
-
-if ($request_method == 'POST' && $uri[0] == 'api' && $uri[1] == 'register') {
-    $data = json_decode(file_get_contents("php://input"), true);
-    echo $controller->register($data);
-} elseif ($request_method == 'POST' && $uri[0] == 'api' && $uri[1] == 'login') {
+if ($request_method == 'POST' && $uri[0] == 'api' && $uri[1] == 'login') {
     $data = json_decode(file_get_contents("php://input"), true);
     echo $controller->login($data);
+    // DISEÑO WEB
+} elseif ($request_method == 'POST' && $uri[0] == 'api' && $uri[1] == 'usuario') {
+    $data = json_decode(file_get_contents("php://input"), true);
+    echo $controller->crearUsuario($data);
     // DISEÑO WEB
 } elseif ($request_method == 'GET' && $uri[0] == 'api' && $uri[1] == 'configwebbybusiness') {
     if (isset($uri[2])) {

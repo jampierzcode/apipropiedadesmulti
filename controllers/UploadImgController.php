@@ -81,8 +81,8 @@ class UploadImgController
             http_response_code(200);
             $response = ['message' => 'remove'];
         } else {
-            http_response_code(404);
-            $response = ['message' => 'no-remove'];
+            http_response_code(200);
+            $response = ['message' => 'remove'];
         }
 
 

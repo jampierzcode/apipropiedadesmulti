@@ -22,17 +22,10 @@ class UserController
         $this->db = $database->getConnection();
         $this->user = new User($this->db);
     }
-
-    public function register($data)
+    public function crearUsuario($data)
     {
-        $this->user->email = $data['email'];
-        $this->user->password = $data['password'];
-
-        if ($this->user->create()) {
-            return json_encode(['message' => 'User registered successfully']);
-        } else {
-            return json_encode(['message' => 'User registration failed']);
-        }
+        $conf = new User($this->db);
+        return $conf->create($data);
     }
 
     public function login($data)
@@ -68,6 +61,7 @@ class UserController
             return json_encode(['message' => 'Login failed']);
         }
     }
+
     public function getUsuariosByAdminId($id)
     {
         $conf = new User($this->db);
