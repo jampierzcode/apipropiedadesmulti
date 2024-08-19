@@ -22,6 +22,13 @@ class PropiedadController
         $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         return json_encode($properties);
     }
+    public function getPropertiesByUserId($id)
+    {
+        $property = new Propiedades($this->db);
+        $stmt = $property->readByUserId($id);
+        $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return json_encode($properties);
+    }
 
     public function getProperty($id)
     {

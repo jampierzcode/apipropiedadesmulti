@@ -140,6 +140,14 @@ if ($request_method == 'POST' && $uri[0] == 'api' && $uri[1] == 'login') {
     } else {
         echo $propertyController->getProperties();
     }
+} elseif ($request_method == 'GET' && $uri[0] == 'api' && $uri[1] == 'propiedadesbyuser') {
+
+    // $user_data = authenticate();
+    if (isset($uri[2])) {
+        echo $propertyController->getPropertiesByUserId($uri[2]);
+    } else {
+        echo json_encode(['message' => "Error en la consulta, falta un parametro"]);
+    }
 } elseif ($request_method == 'GET' && $uri[0] == 'api' && $uri[1] == 'amenidadesbypropiedad') {
 
     if (isset($uri[2])) {

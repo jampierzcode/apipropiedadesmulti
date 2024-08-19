@@ -39,15 +39,23 @@ class Propiedades
 
     public function read()
     {
-        $query = "SELECT p.*, pm.categoria, pm.url_file, pm.etiqueta, pr.name as region_name, pv.name as provincia_name, pd.name as distrito_name FROM " . $this->table_name . " p  left join propiedad_multimedia pm on p.id=pm.propiedad_id  AND pm.etiqueta = 'Portada' inner join ubigeo_peru_departments pr on p.region=pr.id inner join ubigeo_peru_provinces pv on p.provincia=pv.id inner join ubigeo_peru_districts pd on p.distrito=pd.id";
+        $query = "SELECT p.*, pr.name as region_name, pv.name as provincia_name, pd.name as distrito_name FROM " . $this->table_name . " p inner join ubigeo_peru_departments pr on p.region=pr.id inner join ubigeo_peru_provinces pv on p.provincia=pv.id inner join ubigeo_peru_districts pd on p.distrito=pd.id";
         $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt;
+    }
+    public function readByUserId($id)
+    {
+        $query = "SELECT p.*, pr.name as region_name, pv.name as provincia_name, pd.name as distrito_name FROM " . $this->table_name . " p inner join ubigeo_peru_departments pr on p.region=pr.id inner join ubigeo_peru_provinces pv on p.provincia=pv.id inner join ubigeo_peru_districts pd on p.distrito=pd.id INNER JOIN user_business ub ON p.empresa_id=ub.business_id WHERE ub.user_id=?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $id);
         $stmt->execute();
         return $stmt;
     }
 
     public function readOne()
     {
-        $query = "SELECT p.*, pm.categoria, pm.url_file, pm.etiqueta, pr.name as region_name, pv.name as provincia_name, pd.name as distrito_name FROM " . $this->table_name . "  p  left join propiedad_multimedia pm on p.id=pm.propiedad_id inner join ubigeo_peru_departments pr on p.region=pr.id inner join ubigeo_peru_provinces pv on p.provincia=pv.id inner join ubigeo_peru_districts pd on p.distrito=pd.id WHERE p.id = ?";
+        $query = "SELECT p.*, pr.name as region_name, pv.name as provincia_name, pd.name as distrito_name FROM " . $this->table_name . " p inner join ubigeo_peru_departments pr on p.region=pr.id inner join ubigeo_peru_provinces pv on p.provincia=pv.id inner join ubigeo_peru_districts pd on p.distrito=pd.id WHERE p.id = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $this->id);
         $stmt->execute();
