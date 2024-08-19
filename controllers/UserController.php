@@ -48,6 +48,7 @@ class UserController
             $jwt = JWT::encode($payload, $_ENV['JWT_SECRET'], 'HS256');
             $data =  array(
                 "id" => $this->user->id,
+                "uuid" => $this->user->uuid,
                 "email" => $this->user->email,
                 "nombres" => $this->user->nombres,
                 "celular" => $this->user->celular,

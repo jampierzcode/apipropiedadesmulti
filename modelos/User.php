@@ -10,6 +10,7 @@ class User
     private $table_name = "usuario";
 
     public $id;
+    public $uuid;
     public $email;
     public $rol;
     public $cliente_id;
@@ -33,6 +34,7 @@ class User
         $row = $stmt->fetch(\PDO::FETCH_ASSOC);
         if ($row && password_verify($this->password, $row['password'])) {
             $this->id = $row['id'];
+            $this->uuid = $row['uuid'];
             $this->nombres = $row['nombres'];
             $this->email = $row['email'];
             $this->celular = $row['celular'];
