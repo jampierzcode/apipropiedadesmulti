@@ -66,6 +66,13 @@ if ($request_method == 'POST' && $uri[0] == 'api' && $uri[1] == 'login') {
     $data = json_decode(file_get_contents("php://input"), true);
     echo $controller->login($data);
     // DISEÑO WEB
+} elseif ($request_method == 'GET' && $uri[0] == 'api' && $uri[1] == 'usuario') {
+    if (isset($uri[2])) {
+
+        echo $controller->getUsuarioById($uri[2]);
+    } else {
+        echo json_encode(['message' => "Error en la consulta, falta un parametro"]);
+    }
 } elseif ($request_method == 'POST' && $uri[0] == 'api' && $uri[1] == 'usuario') {
     $data = json_decode(file_get_contents("php://input"), true);
     echo $controller->crearUsuario($data);
@@ -103,6 +110,13 @@ if ($request_method == 'POST' && $uri[0] == 'api' && $uri[1] == 'login') {
     } else {
         echo $configController->getBusiness();
     }
+} elseif ($request_method == 'GET' && $uri[0] == 'api' && $uri[1] == 'businessbyslug') {
+    if (isset($uri[2])) {
+
+        echo $configController->getBusinessBySlug($uri[2]);
+    } else {
+        echo json_encode(['message' => "Error en la consulta, falta un parametro"]);
+    }
 } elseif ($request_method == 'POST' && $uri[0] == 'api' && $uri[1] == 'business') {
 
     $user_data = authenticate();
@@ -115,7 +129,7 @@ if ($request_method == 'POST' && $uri[0] == 'api' && $uri[1] == 'login') {
     $user_data = authenticate();
     $data = json_decode(file_get_contents("php://input"), true);
 
-    echo $configController->updateBusinessByUser($data);
+    echo $configController->updateBusinessById($data);
     // }
 } elseif ($request_method == 'POST' && $uri[0] == 'api' && $uri[1] == 'businessimg') {
     $user_data = authenticate();
@@ -145,6 +159,14 @@ if ($request_method == 'POST' && $uri[0] == 'api' && $uri[1] == 'login') {
     // $user_data = authenticate();
     if (isset($uri[2])) {
         echo $propertyController->getPropertiesByUserId($uri[2]);
+    } else {
+        echo json_encode(['message' => "Error en la consulta, falta un parametro"]);
+    }
+} elseif ($request_method == 'GET' && $uri[0] == 'api' && $uri[1] == 'propiedadesbybusiness') {
+
+    // $user_data = authenticate();
+    if (isset($uri[2])) {
+        echo $propertyController->getPropertiesByBusinessId($uri[2]);
     } else {
         echo json_encode(['message' => "Error en la consulta, falta un parametro"]);
     }
@@ -287,6 +309,20 @@ if ($request_method == 'POST' && $uri[0] == 'api' && $uri[1] == 'login') {
     } else {
         echo json_encode(['message' => 'Te falta parametros del ID del usuario']);
     }
+} elseif ($request_method == 'GET' && $uri[0] == 'api' && $uri[1] == 'clientesbyasigned') {
+
+    if (isset($uri[2])) {
+        echo $clienteController->getClientesByAsignedId($uri[2]);
+    } else {
+        echo json_encode(['message' => 'Te falta parametros del ID del usuario']);
+    }
+} elseif ($request_method == 'GET' && $uri[0] == 'api' && $uri[1] == 'clientesbybusiness') {
+
+    if (isset($uri[2])) {
+        echo $clienteController->getClientesByBusinessId($uri[2]);
+    } else {
+        echo json_encode(['message' => 'Te falta parametros del ID del usuario']);
+    }
 } elseif ($request_method == 'GET' && $uri[0] == 'api' && $uri[1] == 'usuariosbyadmin') {
 
     if (isset($uri[2])) {
@@ -298,4 +334,8 @@ if ($request_method == 'POST' && $uri[0] == 'api' && $uri[1] == 'login') {
     $data = json_decode(file_get_contents("php://input"), true);
     // echo print_r($data);
     echo $clienteController->createCliente($data);
+} elseif ($request_method == 'POST' && $uri[0] == 'api' && $uri[1] == 'clientesasigned') {
+    $data = json_decode(file_get_contents("php://input"), true);
+    // echo print_r($data);
+    echo $clienteController->createClienteAsigned($data);
 }

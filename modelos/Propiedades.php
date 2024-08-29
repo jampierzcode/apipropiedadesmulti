@@ -39,16 +39,24 @@ class Propiedades
 
     public function read()
     {
-        $query = "SELECT p.*, pr.name as region_name, pv.name as provincia_name, pd.name as distrito_name FROM " . $this->table_name . " p inner join ubigeo_peru_departments pr on p.region=pr.id inner join ubigeo_peru_provinces pv on p.provincia=pv.id inner join ubigeo_peru_districts pd on p.distrito=pd.id";
+        $query = "SELECT p.*, pm.categoria, pm.url_file, pm.etiqueta, pr.name as region_name, pv.name as provincia_name, pd.name as distrito_name FROM " . $this->table_name . " p left join propiedad_multimedia pm on p.id=pm.propiedad_id AND pm.etiqueta = 'Portada' inner join ubigeo_peru_departments pr on p.region=pr.id inner join ubigeo_peru_provinces pv on p.provincia=pv.id inner join ubigeo_peru_districts pd on p.distrito=pd.id";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;
     }
     public function readByUserId($id)
     {
-        $query = "SELECT p.*, pr.name as region_name, pv.name as provincia_name, pd.name as distrito_name FROM " . $this->table_name . " p inner join ubigeo_peru_departments pr on p.region=pr.id inner join ubigeo_peru_provinces pv on p.provincia=pv.id inner join ubigeo_peru_districts pd on p.distrito=pd.id INNER JOIN user_business ub ON p.empresa_id=ub.business_id WHERE ub.user_id=?";
+        $query = "SELECT p.*, pm.categoria, pm.url_file, pm.etiqueta, pr.name as region_name, pv.name as provincia_name, pd.name as distrito_name FROM " . $this->table_name . " p left join propiedad_multimedia pm on p.id=pm.propiedad_id AND pm.etiqueta = 'Portada' inner join ubigeo_peru_departments pr on p.region=pr.id inner join ubigeo_peru_provinces pv on p.provincia=pv.id inner join ubigeo_peru_districts pd on p.distrito=pd.id INNER JOIN user_business ub ON p.empresa_id=ub.business_id WHERE ub.user_id=?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $id);
+        $stmt->execute();
+        return $stmt;
+    }
+    public function readByBusinessId($businessId)
+    {
+        $query = "SELECT p.*, pm.categoria, pm.url_file, pm.etiqueta, pr.name as region_name, pv.name as provincia_name, pd.name as distrito_name FROM " . $this->table_name . " p left join propiedad_multimedia pm on p.id=pm.propiedad_id AND pm.etiqueta = 'Portada' inner join ubigeo_peru_departments pr on p.region=pr.id inner join ubigeo_peru_provinces pv on p.provincia=pv.id inner join ubigeo_peru_districts pd on p.distrito=pd.id WHERE p.empresa_id=?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $businessId);
         $stmt->execute();
         return $stmt;
     }
@@ -66,7 +74,7 @@ class Propiedades
     {
         try {
             //code...
-            $query = "INSERT INTO " . $this->table_name . "(logo, nombre, tipo, purpose, descripcion, video_descripcion, link_extra, region, provincia, distrito, exactAddress, postalcode, position_locate, area_from, area_const_from, precio_from, moneda, etapa, fecha_entrega, fecha_captacion, fecha_created, financiamiento, created_by, status, name_reference) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $query = "INSERT INTO " . $this->table_name . "(logo, nombre, tipo, purpose, descripcion, video_descripcion, link_extra, region, provincia, distrito, exactAddress, postalcode, position_locate, area_from, area_const_from, precio_from, moneda, etapa, fecha_entrega, fecha_captacion, fecha_created, financiamiento, created_by, status, name_reference, empresa_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->conn->prepare($query);
 
             $stmt->execute([
@@ -95,6 +103,7 @@ class Propiedades
                 $data['created_by'],
                 $data['status'],
                 $data['name_reference'],
+                $data['empresa_id'],
             ]);
             $propiedad_id = $this->conn->lastInsertId();
             $success = json_encode(['message' => 'add', "id" => $propiedad_id]);

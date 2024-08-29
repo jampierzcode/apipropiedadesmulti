@@ -29,6 +29,13 @@ class PropiedadController
         $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         return json_encode($properties);
     }
+    public function getPropertiesByBusinessId($businessId)
+    {
+        $property = new Propiedades($this->db);
+        $stmt = $property->readByBusinessId($businessId);
+        $properties = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return json_encode($properties);
+    }
 
     public function getProperty($id)
     {

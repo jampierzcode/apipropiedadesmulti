@@ -70,4 +70,11 @@ class UserController
         $usuarios = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         return json_encode($usuarios);
     }
+    public function getUsuarioById($id)
+    {
+        $conf = new User($this->db);
+        $stmt = $conf->readUsuario($id);
+        $usuario = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return json_encode($usuario);
+    }
 }

@@ -54,10 +54,11 @@ class User
             $this->conn->beginTransaction();
 
             // Primera inserción: tabla `usuario`
-            $query = "INSERT INTO usuario(nombres, celular, documento, email, password, created_by, fecha_created, rol, status) 
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $query = "INSERT INTO usuario(uuid, nombres, celular, documento, email, password, created_by, fecha_created, rol, status) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->conn->prepare($query);
             $stmt->execute([
+                $data['uuid'],
                 $data['nombres'],
                 $data['celular'],
                 $data['documento'],
@@ -118,6 +119,14 @@ WHERE e.id IN (
 ";
         $stmt = $this->conn->prepare($query);
         $stmt->execute([$user_id]);
+
+        return $stmt;
+    }
+    public function readUsuario($id)
+    {
+        $query = "SELECT * FROM usuario WHERE id=? ";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$id]);
 
         return $stmt;
     }

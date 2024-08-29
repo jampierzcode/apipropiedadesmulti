@@ -29,6 +29,13 @@ class ConfiguracionController
         $business = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         return json_encode($business);
     }
+    public function getBusinessBySlug($slug)
+    {
+        $conf = new Configuracion($this->db);
+        $stmt = $conf->readBySlug($slug);
+        $business = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return json_encode($business);
+    }
     public function getBusinessByUser($id)
     {
         $conf = new Configuracion($this->db);
@@ -58,9 +65,9 @@ class ConfiguracionController
         $conf = new Configuracion($this->db);
         return $conf->updateWebByBusiness($data);
     }
-    public function updateBusinessByUser($data)
+    public function updateBusinessById($data)
     {
         $conf = new Configuracion($this->db);
-        return $conf->updateByUser($data);
+        return $conf->updateById($data);
     }
 }

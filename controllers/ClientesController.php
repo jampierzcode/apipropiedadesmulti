@@ -36,10 +36,29 @@ class ClientesController
         $business = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         return json_encode($business);
     }
+    public function getClientesByAsignedId($id)
+    {
+        $conf = new Clientes($this->db);
+        $stmt = $conf->readByAsignedId($id);
+        $business = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return json_encode($business);
+    }
+    public function getClientesByBusinessId($id)
+    {
+        $conf = new Clientes($this->db);
+        $stmt = $conf->readByBusinessId($id);
+        $business = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return json_encode($business);
+    }
     public function createCliente($data)
     {
         $conf = new Clientes($this->db);
         return $conf->create($data);
+    }
+    public function createClienteAsigned($data)
+    {
+        $conf = new Clientes($this->db);
+        return $conf->createAsigned($data);
     }
     public function updateBusinessByUser($data)
     {

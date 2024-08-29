@@ -29,6 +29,14 @@ class Configuracion
         $stmt->execute();
         return $stmt;
     }
+    public function readBySlug($slug)
+    {
+        $query = "SELECT * FROM business WHERE slug=?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $slug);
+        $stmt->execute();
+        return $stmt;
+    }
     public function readByUser($id)
     {
         $query = "SELECT b.* FROM user_business as ub inner join business as b on ub.business_id=b.id  WHERE ub.user_id=?";
@@ -62,8 +70,8 @@ class Configuracion
                 $data['email'],
                 $data['logo']
             ]);
-            $propiedad_id = $this->conn->lastInsertId();
-            $success = json_encode(['message' => 'add', "id" => $propiedad_id]);
+            $empresa_id = $this->conn->lastInsertId();
+            $success = json_encode(['message' => 'add', "id" => $empresa_id]);
             return $success;
         } catch (\Throwable $error) {
             //throw $th;
@@ -87,8 +95,8 @@ class Configuracion
                 $data['color_capa_fondo_portada'],
                 $data['portada']
             ]);
-            $propiedad_id = $this->conn->lastInsertId();
-            $success = json_encode(['message' => 'add', "id" => $propiedad_id]);
+            $web_id = $this->conn->lastInsertId();
+            $success = json_encode(['message' => 'add', "id" => $web_id]);
             return $success;
         } catch (\Throwable $error) {
             //throw $th;
@@ -101,16 +109,42 @@ class Configuracion
     {
         try {
             //code...
-            $query = "UPDATE " . $this->table_name . " SET nombre_razon=?, website=?, direccion=?,  phone_contact=?, email=?, logo=? WHERE user_id=?";
+            $query = "UPDATE " . $this->table_name . " SET nombre_razon=?, slug=?, website=?, direccion=?,  phone_contact=?, email=?, logo=? WHERE user_id=?";
             $stmt = $this->conn->prepare($query);
             $stmt->execute([
                 $data['nombre_razon'],
+                $data['slug'],
                 $data['website'],
                 $data['direccion'],
                 $data['phone_contact'],
                 $data['email'],
                 $data['logo'],
                 $data['user_id']
+            ]);
+            $success = json_encode(['message' => 'update']);
+            return $success;
+        } catch (\Throwable $error) {
+            //throw $th;
+            //throw $th;
+            $success = json_encode(['message' => 'error', "error" => $error->getMessage()]);
+            return $success;
+        }
+    }
+    public function updateById($data)
+    {
+        try {
+            //code...
+            $query = "UPDATE " . $this->table_name . " SET nombre_razon=?, slug=?, website=?, direccion=?,  phone_contact=?, email=?, logo=? WHERE id=?";
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute([
+                $data['nombre_razon'],
+                $data['slug'],
+                $data['website'],
+                $data['direccion'],
+                $data['phone_contact'],
+                $data['email'],
+                $data['logo'],
+                $data['id']
             ]);
             $success = json_encode(['message' => 'update']);
             return $success;

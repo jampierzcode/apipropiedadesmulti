@@ -37,11 +37,27 @@ class Clientes
         $stmt->execute();
         return $stmt;
     }
+    public function readByAsignedId($id)
+    {
+        $query = "SELECT c.*, p.nombre as nombre_propiedad FROM clientes c inner join propiedades p on c.propiedad_id=p.id inner join user_cliente uc on c.id=uc.cliente_id WHERE uc.user_id=?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $id);
+        $stmt->execute();
+        return $stmt;
+    }
+    public function readByBusinessId($id)
+    {
+        $query = "SELECT c.*, p.nombre as nombre_propiedad FROM clientes c inner join propiedades p on c.propiedad_id=p.id WHERE c.empresa_id=?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $id);
+        $stmt->execute();
+        return $stmt;
+    }
     public function create($data)
     {
         try {
             //code...
-            $query = "INSERT INTO " . $this->table_name . "(nombres, apellidos, email, celular, mensaje, propiedad_id, fecha_created) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $query = "INSERT INTO " . $this->table_name . "(nombres, apellidos, email, celular, mensaje, propiedad_id, empresa_id, fecha_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->conn->prepare($query);
 
             $stmt->execute([
@@ -51,10 +67,32 @@ class Clientes
                 $data['celular'],
                 $data['mensaje'],
                 $data['propiedad_id'],
+                $data['empresa_id'],
                 $data['fecha_created']
             ]);
             $cliente_id = $this->conn->lastInsertId();
             $success = json_encode(['message' => 'add', "id" => $cliente_id]);
+            return $success;
+        } catch (\Throwable $error) {
+            //throw $th;
+            $success = json_encode(['message' => 'error', "error" => $error->getMessage()]);
+            return $success;
+        }
+    }
+    public function createAsigned($data)
+    {
+        try {
+            //code...
+            $query = "INSERT INTO user_cliente (cliente_id, user_id, fecha_asigned) VALUES (?, ?, ?)";
+            $stmt = $this->conn->prepare($query);
+
+            $stmt->execute([
+                $data['cliente_id'],
+                $data['user_id'],
+                $data['fecha_asigned']
+            ]);
+            $asigned_id = $this->conn->lastInsertId();
+            $success = json_encode(['message' => 'add', "id" => $asigned_id]);
             return $success;
         } catch (\Throwable $error) {
             //throw $th;
