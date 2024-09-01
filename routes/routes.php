@@ -11,6 +11,7 @@ use \Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 // Obtener el dominio del archivo .env
 $dominio = $_ENV['DOMINIO'];
+$version_api = $_ENV['VERSION_API'];
 // CORS headers
 header("Access-Control-Allow-Origin: $dominio");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE");
@@ -32,7 +33,7 @@ $geoController = new Usuario\Apipropiedades\GeoController();
 $uploadImgController = new Usuario\Apipropiedades\UploadImgController();
 $controller = new Usuario\Apipropiedades\UserController();
 $request_method = $_SERVER['REQUEST_METHOD'];
-$base_path = '/apipropiedades2'; // Cambiar según la configuración local o de producción
+$base_path = $version_api; // Cambiar según la configuración local o de producción
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // Remover el base_path si existe en el URI
